@@ -744,6 +744,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "float-cmp"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "134a8fa843d80a51a5b77d36d42bc2def9edcb0262c914861d08129fd1926600"
+dependencies = [
+ "num-traits",
+]
+
+[[package]]
 name = "float_next_after"
 version = "0.1.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1522,6 +1531,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "nearly_eq"
+version = "0.2.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a629868a433328c35d654e1e1fb4648a68a042e3c71de4e507a9bcf4602c5635"
+
+[[package]]
 name = "nix"
 version = "0.18.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2009,6 +2024,7 @@ version = "0.1.0"
 dependencies = [
  "ggez",
  "rgb",
+ "vec3D",
 ]
 
 [[package]]
@@ -2429,6 +2445,16 @@ name = "uuid"
 version = "0.8.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "bc5cf98d8186244414c848017f0e2676b3fcb46807f6668a97dfe67359a3c4b7"
+
+[[package]]
+name = "vec3D"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "cb5f69903916cf48bee25a0abe157673ebeb11264e12d8074388acde76e0246d"
+dependencies = [
+ "float-cmp",
+ "nearly_eq",
+]
 
 [[package]]
 name = "vec_map"

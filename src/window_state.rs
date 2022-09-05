@@ -3,19 +3,39 @@ use ggez::graphics::{self, Image};
 use ggez::{Context, GameResult};
 use rgb::RGBA8;
 
+mod ray;
+use ray::*;
+
+use vec3D::*;
+
+fn hit_sphere(center: Vec3D, radius: f32, r: &Ray) -> bool {
+    let oc = *r.origin() - center;
+    let a = r.direction().dot(*r.direction());
+    let b = 2.0 * oc.dot(*r.direction());
+    let c = oc.dot(oc) - radius as f64*radius as f64;
+    let discriminant = b*b - 4.0*a*c;
+    return discriminant > 0.0;
+}
+
+fn ray_color(r: Ray) -> Vec3D {
+    if hit_sphere(Vec3D{x: 0.0, y:0.0, z:-1.0},0.5, &r) {
+        return Vec3D{x:1.0, y:0.0, z:0.0};
+    }
+
+    let unit_direction = r.direction().unit();
+    let t = 0.5*(unit_direction.y + 1.0);
+    return Vec3D{x:1.0,y:1.0,z:1.0}*(1.0-t)+Vec3D{x:0.5,y:0.7,z:1.0}*t;
+}
+
 pub struct WindowState {
-    width: f32,
-    height: f32,
     aspect_ratio: f32,
     pixels: Vec<u8>,
     control_pixels: Vec<u8>
 }
 
 impl WindowState {
-    pub fn new(w: f32, h: f32, ar: f32) -> GameResult<WindowState> {
+    pub fn new(ar: f32) -> GameResult<WindowState> {
         let s = WindowState {
-            width: w,
-            height: h,
             aspect_ratio: ar,
             pixels: Vec::<u8>::new(),
             control_pixels: Vec::<u8>::new()
@@ -32,18 +52,29 @@ impl WindowState {
     }
 
     fn refresh_pixel(&mut self, ctx: &Context) {
+        // CAMERA
+        let viewport_height:f64 = 2.0;
+        let viewport_width = self.aspect_ratio as f64 * viewport_height;
+        let focal_length = 1.0;
+    
+        let origin = Vec3D{x:0.0, y:0.0, z:0.0};
+        let horizontal = Vec3D{x:viewport_width, y:0.0, z:0.0};
+        let vertical = Vec3D{x:0.0, y:viewport_height, z:0.0};
+        let lower_left_corner = origin - horizontal/2.0 - vertical/2.0 - Vec3D{x:0.0, y:0.0, z:focal_length};
+
         let mut rgb_pixels : Vec<rgb::RGBA8> = Vec::<rgb::RGBA8>::new();
         let (width, height) = graphics::size(ctx);
 
         for y in 0..height as u16 {
             for x in 0..width as u16 {
-                let r = x as f32 / (width-1.0);
-                let g =  y as f32 / (height-1.0);
-                let b = 0.25;
+                let u = x as f64 / (width as f64-1.0);
+                let v =  y as f64 / (height as f64-1.0);
+                let r = Ray::new(origin, lower_left_corner + horizontal*u + vertical*v - origin);
+                let pixel_color = ray_color(r);
 
-                let ir = (r*255.999) as u8;
-                let ig = (g*255.999) as u8;
-                let ib = (b*255.999) as u8;
+                let ir = (pixel_color.x*255.999) as u8;
+                let ig = (pixel_color.y*255.999) as u8;
+                let ib = (pixel_color.z*255.999) as u8;
 
                 rgb_pixels.push(RGBA8 { r: ir, g: ig,b: ib, a: 255});
             }

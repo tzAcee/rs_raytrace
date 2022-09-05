@@ -1,7 +1,7 @@
 mod window_state;
 
 use window_state::WindowState;
-use ggez::{GameResult, event};
+use ggez::{GameResult, event, conf::FullscreenType};
 
 const WINDOW_WIDTH : f32 = 400.0;
 const ASPECT_RATIO: f32 = 16.0/9.0;
@@ -13,7 +13,7 @@ fn run_ggez_renderer() -> GameResult {
     let cb = ggez::ContextBuilder::new("Rust Raytrace", "FleeXo").window_mode(win_mode);
 
     let (ctx, event_loop) = cb.build()?;
-    let state = WindowState::new(WINDOW_WIDTH, WINDOW_HEIGHT, ASPECT_RATIO)?;
+    let state = WindowState::new(ASPECT_RATIO)?;
     event::run(ctx, event_loop, state)
 }
 pub fn main() -> GameResult {
